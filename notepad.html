@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notepad</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        #editor {
+            text-shadow: -1px 1px 1px #000,
+                         1px -1px 2px #000,
+                         0 0 5px #000,
+                         0 0 7px #000;
+            font-weight: 1000;
+            outline: none;
+            border: none;
+            background: #cc9;
+            color: #ffffff;
+            font-family: monospace;
+            resize: none;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: default !important;
+            font-size: 1.7em;
+        }
+        ::selection {
+            background: rgba(255, 255, 255, 0.0);
+            color: #cc9;
+            text-shadow: 0 0 2px #fff,
+                         0 0 4px #000,
+                         0 0 12px gold;
+        }
+        body {
+            background: #00416A;
+            margin: 0;
+            overflow: hidden;
+        }
+        h1 {
+            color: #00FF00;
+            font-size: 1.5em;
+            transition: 0.5s;
+            font-family: "Lucida Console";
+            text-shadow: 3px 4px 10px #00FF00;
+        }
+    </style>
+    <script>
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.shiftKey && event.altKey) {
+                if (event.key === 'S') {
+                    event.preventDefault();
+                    saveText();
+                } else if (event.key === 'O') {
+                    event.preventDefault();
+                    loadText();
+                }
+            }
+            if (event.shiftKey && event.key === '}') {
+                event.preventDefault();
+                saveText();
+            }
+            if (event.shiftKey && event.key === '{') {
+                event.preventDefault();
+                loadText();
+            }
+            if (event.shiftKey && event.key === '|') {
+                event.preventDefault();
+                clearText();
+            }
+        });
+        function saveText() {
+            var textToSave = document.getElementById('editor').value;
+            var filename = prompt("Enter file name:");
+            var extension = prompt("Enter file extension:");
+            if (filename && extension) {
+                var fullFilename = filename + "." + extension;
+                var blob = new Blob([textToSave], {type: 'text/plain'});
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = fullFilename;
+                a.click();
+            }
+        }
+        function loadText() {
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.txt, .html';
+            input.onchange = function(event) {
+                var file = event.target.files[0];
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('editor').value = reader.result;
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+        function clearText() {
+            document.getElementById('editor').value = '';
+        }
+    </script>
+</head>
+<body>
+    <textarea id="editor" spellcheck="false" autofocus></textarea>
+</body>
+</html>
